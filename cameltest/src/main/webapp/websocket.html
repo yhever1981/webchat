@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Testing websockets</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="node_modules/bootstrap/dist/css/bootstrap.min.c" rel="stylesheet" media="screen">
+<script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+	
+	<div>
+		
+		<label>name:</label><input id="name" type="text" name="name" /><BR>
+		<input type="submit" value="connect" onclick="connect()" />
+	</div>
+	<div>
+		
+		<input id="content" type="text" name="content" /><BR>
+		
+		<input type="submit" value="Start" onclick="start()" />
+	</div>
+	
+	<div id="messages"></div>
+	<script type="text/javascript">
+		var webSocket;
+		function connect()
+		{
+
+			var name = document.getElementById('name').value;
+			webSocket = new WebSocket('ws://localhost:8080/cameltest/websocketTest/'+name);
+			webSocket.onerror = function(event) {
+				onError(event)
+			};
+	
+			webSocket.onopen = function(event) {
+				onOpen(event)
+			};
+	
+			webSocket.onmessage = function(event) {
+				onMessage(event)
+			};
+		}
+	
+		function onMessage(event) {
+			document.getElementById('messages').innerHTML += '<br />' + event.data;
+		}
+	
+		function onOpen(event) {
+			document.getElementById('messages').innerHTML = 'Connection established';
+			
+			webSocket.send("CONNECT FIRST MESSAGE");
+		}
+	
+		function onError(event) {
+			alert(event.data);
+		}
+	
+		function start() {
+			var content = document.getElementById('content').value;
+			alert(content);
+			webSocket.send('hello '+content +" ");
+			return false;
+		}
+		
+	</script>
+	
+	 
+</body>
+
+
+</html>
